@@ -1,0 +1,11 @@
+.ruby .hljs-comment {
+  color: #4f4f4f;
+}
+
+.reveal pre code {
+  max-height: 1000px;
+}
+
+.full-image {
+  top: -100px !important;
+}

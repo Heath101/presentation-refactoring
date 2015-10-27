@@ -36,24 +36,14 @@
   </head>
 
   <body>
-
     <div class="reveal">
 
       <!-- Any section element inside of this container is displayed as a slide -->
       <div class="slides">
         <section>
-          <h1>Reveal.js</h1>
-          <h3>The HTML Presentation Framework</h3>
-          <p>
-            <small>Created by <a href="http://hakim.se">Hakim El Hattab</a> / <a href="http://twitter.com/hakimel">@hakimel</a></small>
-          </p>
+          <h1>A Small Refactoring</h1>
         </section>
 
-
-        <section>
-          <h2>A Small Refactoring</h2>
-          <p></p>
-        </section>
 
         <section>
           <section class="full-image" data-transition="fade">
@@ -70,16 +60,16 @@
             <h4>LessonsController</h4>
             <pre><code class="hljs" data-trim contenteditable>
 class LessonsController < ApplicationController
-  LESSON_CONTENT ||= YAML.load_file('config/lesson_content.yml')
+  LESSONS_CONTENT ||= YAML.load_file('config/lesson_content.yml')
 
   def index
     redirect_to welcome_path unless current_user.welcomed?
-    @lessons_content = LESSON_CONTENT
+    @lessons_content = LESSONS_CONTENT
   end
 
   def show
     raise_not_found unless valid_lesson_slug?
-    @lesson_content = LESSON_CONTENT[params[:lesson_slug]]
+    @lesson_content = LESSONS_CONTENT[params[:lesson_slug]]
     current_user.watch_lesson @lesson_content[:lesson_number]
     render params[:lesson_slug].underscore
   end
@@ -95,18 +85,18 @@ end
             <h4>LessonsController</h4>
             <pre><code class="hljs" data-trim contenteditable>
 class LessonsController < ApplicationController
-  LESSON_CONTENT ||= YAML.load_file('config/lesson_content.yml')
+  LESSONS_CONTENT ||= YAML.load_file('config/lesson_content.yml')
 
   def index
     # redirect_to welcome_path unless current_user.welcomed?
-    @lessons_content = LESSON_CONTENT
+    @lessons_content = LESSONS_CONTENT
   end
 
   def show
     # raise_not_found unless valid_lesson_slug?
-    @lesson_content = LESSON_CONTENT[params[:lesson_slug]]
+    @lesson_content = LESSONS_CONTENT[params[:lesson_slug]]
     # current_user.watch_lesson @lesson_content[:lesson_number]
-    render params[:lesson_slug].underscore
+    # render params[:lesson_slug].underscore
   end
 
 # private
@@ -141,20 +131,46 @@ end
 
           </section>
         </section>
+
+        <section>
+          <section class="full-image" data-transition="fade">
+            <img src="lib/images/LessonPage.png" />
+          </section>
+          <section>
+            <h4>Lesson Video Page</h4>
+            <pre><code class="hljs" data-trim contenteditable>
+<div class="LessonVideo">
+  <div class="LessonVideo-player">
+    <%= image_tag content[:video_image] %>
+  </div>
+  <div class="LessonVideo-detail">
+    <h3>After the video</h3>
+    <p><%= content[:description] %></p>
+    <%= link_to download_url_for(content[:activity]), class: "Button Button--primary" do %>
+      Download Activity <i class="fa fa-file-pdf-o"></i>
+    <% end %>
+  </div>
+</div>
+            </code></pre>
+          </section>
+
+        </section>
+
         <section>
         <h4>app/views/lessons/index.erb</h4>
         <pre><code class="hljs" data-trim contenteditable>
 <h1>Lessons</h1>
 
 <% @lessons_content.each do |lesson_slug, lesson_content| %>
-  <%= render 'lesson_summary', slug: lesson_slug,
+  <%= render 'lesson_summary',  slug: lesson_slug,
                              content: lesson_content %>
 <% end %>
         </code></pre>
         </section>
-        <section data-transition="fade">
-          <h4>app/views/lessons/_lesson_summary.erb</h4>
-          <pre><code class="hljs" contenteditable>
+        <section>
+          <section data-transition="fade">
+            <h4>app/views/lessons/_lesson_summary.erb</h4>
+            <pre><code class="hljs" contenteditable>
 <div class="LessonSummary">
   <div class="LessonSummary-image">
     <%= link_to image_tag(content[:image]), lesson_path(slug) %>
@@ -165,80 +181,221 @@ end
     <%= lesson_link_for(content, current_user) %>
   </div>
 </div>
-          </code></pre>
-        </section>
-
-        <section>
-          <pre><code class="hljs" contenteditable>
----
-digging-out-the-roots:
-  :lesson_number: 1
-  :title:  "Digging out the Roots"
-  :slug: "digging-out-the-roots"
-  :summary: "You have a passion for helping others, but you're just not quite sure where to start. That's okay! In this lesson, you'll see how asking the right questions and listening carefully to the answers can teach you a lot—and help you find the real source of budgeting problems."
-  :description: "In this lesson you learned about the power of asking questions. The application activity gives you some firsthand experience at identifying the kind of questions you might need to ask someone with budgeting issues."
-  :image: 'lesson-1.png'
-  :activity: 'foc_activity_1.pdf'
-
-solving-perspective-problems:
-  :lesson_number: 2
-  :title: "Solving Perspective Problems"
-  :slug: "solving-perspective-problems"
-  :summary: "The first step toward creating an effective budget is really understanding why it's such a big deal in the first place.  In this lesson, Dave talks about how \"perspective problems\" touch on four key areas and how budgeting with a proper perspective can make a huge difference in the lives of the people you help."
-  :description: "In this lesson, Dave unpacked four key areas where budgeting can change your life. To help you apply those truths in your budgeting conversation with others, evaluate how they have worked in your own life. That's the focus of this lesson's application activity."
-  :image: 'lesson-2.png'
-  :activity: 'foc_activity_2.pdf'
-          </code></pre>
-
-        </section>
-
-        <section>
-          <h4>Style Guide reference</h4>
-          <pre><code class="hljs" data-trim contenteditable>
-<section class="ContentRow">
-  <div class="ContentRow-contain">
-    <header class="ContentRow-header">
-      <h2>Lesson Summary</h2>
-    </header>
-
-    <% content = {image:         "https://placehold.it/640x346",
-                  title:         "Lesson Title",
-                  summary:       "Bacon ipsum dolor amet beef ribs pork loin corned beef . . .",
-                  lesson_number: 1
-                } %>
-    <%= render 'lessons/lesson_summary', slug: 'slug-to-lesson-page', content: content %>
-
-    <h6>Notes</h6>
-    <p>To use this on a page you should render the partial <code>"views/lessons/_lesson_summary.erb"</code>.  This partial expects to receive local variables of <b>:slug</b> ( string ) and <b>:content</b> (hash with the keys => :image, :title, :summary, :lesson_number)</p>
+            </code></pre>
+          </section>
+          <section data-transition="fade">
+            <h4>app/views/lessons/_lesson_summary.erb</h4>
+            <pre><code class="hljs erb" contenteditable>
+<div class="LessonSummary">
+  <div class="LessonSummary-image">
+    <%= link_to image_tag(content.image), lesson_path(slug) %>
   </div>
-</section>
-          </code></pre>
+  <div class="LessonSummary-detail">
+    <h3><%= content.title  %></h3>
+    <p><%=  content.summary %></p>
+    <%= lesson_link_for(content, current_user) %>
+  </div>
+</div>
+            </code></pre>
+          </section>
         </section>
 
 
 
-        <section class="ContentRow">
-          <div class="ContentRow-contain">
-            <header class="ContentRow-header">
-              <h2>Lesson Summary</h2>
-            </header>
 
-            <% content = {image:         "https://placehold.it/640x346",
-                          title:         "Lesson Title",
-                          summary:       "Bacon ipsum dolor amet beef ribs pork loin corned beef . . . ",
-                          lesson_number: 1
-                        } %>
-            <%= render 'lessons/lesson_summary', slug: 'slug-to-lesson-page', content: content %>
-
-            <h6>Notes</h6>
-            <p>To use this on a page you should render the partial <code>"views/lessons/_lesson_summary.erb"</code>.  This partial expects to receive local variables of <b>:slug</b> ( string ) and <b>:content</b> (hash with the keys => :image, :title, :summary, :lesson_number)</p>
-
-            <pre class="prettyprint"><code class="language-ruby">&lt;% content = {image: "https://placehold.it/640x346", title: "Lesson Title", summary: "Bacon ipsum dolor amet beef ribs pork loin corned beef bresaola filet mignon. Capicola pork chop pork short ribs brisket spare ribs. Capicola biltong pork chop cupim turducken salami meatloaf. Boudin ball tip tail kevin pork loin short loin cupim venison pastrami pig prosciutto kielbasa. Turducken short loin tri-tip ribeye shankle chuck.", lesson_number: 1} %&gt;<br/>&lt;%= render 'lessons/lesson_summary', slug: 'slug-to-lesson-page', content: content %&gt;</code></pre>
+        <section data-background-video="lib/video/bob.mov" >
+          <div class="fragment" style="background-color: rgba(170,57,57,0.8)">
+            <p style="font-style: italic;">"Most intermediate programmers are too reluctant to extract classes." - Bob Martin</p>
           </div>
         </section>
 
+        <section data-transition="fade">
+          <h4>Lesson</h4>
+          <pre><code class="hljs" data-trim contenteditable>
+class Lesson
+  attr_reader :lesson_number
+  attr_reader :title
+  attr_reader :slug
+  attr_reader :summary
+  attr_reader :description
+  attr_reader :image
+  attr_reader :activity
+
+  def initialize(attributes)
+    attributes.each do |key, val|
+      instance_variable_set("@#{key}", val) if respond_to? key
+    end
+  end
+end
+            </code></pre>
+          </section>
+
+
+        <section>
+        <section data-transition="fade">
+          <h4>LessonsController</h4>
+          <pre><code class="hljs" data-trim contenteditable>
+class LessonsController < ApplicationController
+  LESSONS_CONTENT ||= YAML.load_file('config/lesson_content.yml')
+
+  # . . .
+
+end
+          </code></pre>
+        </section>
+        <section data-transition="fade">
+          <h4>LessonsController</h4>
+          <pre><code class="hljs" data-trim contenteditable>
+class LessonsController < ApplicationController
+  LESSONS_CONTENT ||= begin
+    raw_content = YAML.load_file('config/lesson_content.yml')
+    raw_content.each_with_object({}) do |(slug, content), lessons|
+      lessons[slug] = Lesson.new(content)
+    end
+  end
+
+  # . . .
+
+end
+          </code></pre>
+          </section>
+          <section data-transition="fade">
+            <h4>LessonsController</h4>
+            <pre><code class="hljs" data-trim contenteditable>
+class LessonsController < ApplicationController
+  LESSONS ||= Content.load_lessons
+
+  # . . .
+end
+            </code></pre>
+          </section>
+
+          <section data-transition="fade">
+            <h4>LessonsController</h4>
+            <pre><code class="hljs" data-trim contenteditable>
+class LessonsController < ApplicationController
+  LESSONS ||= Content.load_lessons
+
+  def index
+    redirect_to welcome_path unless current_user.welcomed?
+    @lessons = LESSONS
+  end
+
+  def show
+    raise_not_found unless valid_lesson_slug?
+    @lesson = LESSONS[params[:lesson_slug]]
+    current_user.watch_lesson @lesson.lesson_number
+    render params[:lesson_slug].underscore
+  end
+
+private
+  def valid_lesson_slug?
+    Settings.lessons.slugs.include? params[:lesson_slug]
+  end
+end
+            </code></pre>
+            </section>
+        </section>
+
+
+        <section>
+          <h4>Content</h4>
+          <pre ><code class="hljs ruby" data-trim contenteditable>
+module Content
+
+  def self.load_lessons
+    raw_content = YAML.load_file('config/lesson_content.yml')
+    raw_content.each_with_object({}) do |(slug, content), lessons|
+      lessons[slug] = Lesson.new(content)
+    end
+  end
+end
+          </code></pre>
+          <pre class='fragment'><code class="hljs" data-trim contenteditable>
+module Content
+  class Lesson
+    attr_reader :lesson_number
+    attr_reader :title
+    attr_reader :slug
+    attr_reader :summary
+    attr_reader :description
+    attr_reader :image
+    attr_reader :activity
+
+    def initialize(attributes)
+      attributes.each do |key, val|
+        instance_variable_set("@#{key}", val) if respond_to? key
+      end
+    end
+  end
+end
+
+            </code></pre>
+          </section>
+        </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         <!-- Example of nested vertical slides -->
         <section>
+
           <section>
             <h2>Vertical Slides</h2>
             <p>Slides can be nested inside of each other.</p>

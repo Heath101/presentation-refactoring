@@ -55,8 +55,14 @@
           <p></p>
         </section>
 
-        <section class="full-image">
-          <img src="lib/images/LessonSummary.png" />
+        <section>
+          <section class="full-image" data-transition="fade">
+            <img src="lib/images/LessonSummary.png" />
+          </section>
+
+          <section class="full-image" data-transition="fade">
+            <img src="lib/images/LessonPage.png" />
+          </section>
         </section>
 
         <section>
@@ -111,19 +117,44 @@ end
             </code></pre>
           </section>
           <section>
-          <h4>app/views/lessons/index.erb</h4>
-          <pre><code class="hljs" data-trim contenteditable>
+            <h4>config/lesson_content.yml</h4>
+            <pre><code class="hljs" contenteditable>
+  ---
+  digging-out-the-roots:
+    :lesson_number: 1
+    :title:  "Digging out the Roots"
+    :slug: "digging-out-the-roots"
+    :summary: "You have a passion for helping others, but you're ..."
+    :description: "In this lesson you learned about the power ..."
+    :image: 'lesson-1.png'
+    :activity: 'foc_activity_1.pdf'
+
+  solving-perspective-problems:
+    :lesson_number: 2
+    :title: "Solving Perspective Problems"
+    :slug: "solving-perspective-problems"
+    :summary: "The first step toward creating an effective budget ..."
+    :description: "In this lesson, Dave unpacked four key areas ..."
+    :image: 'lesson-2.png'
+    :activity: 'foc_activity_2.pdf'
+            </code></pre>
+
+          </section>
+        </section>
+        <section>
+        <h4>app/views/lessons/index.erb</h4>
+        <pre><code class="hljs" data-trim contenteditable>
 <h1>Lessons</h1>
 
 <% @lessons_content.each do |lesson_slug, lesson_content| %>
   <%= render 'lesson_summary', slug: lesson_slug,
-                               content: lesson_content %>
+                             content: lesson_content %>
 <% end %>
-          </code></pre>
-          </section>
-          <section>
-            <h4>app/views/lessons/_lesson_summary.erb</h4>
-            <pre><code class="hljs" contenteditable>
+        </code></pre>
+        </section>
+        <section data-transition="fade">
+          <h4>app/views/lessons/_lesson_summary.erb</h4>
+          <pre><code class="hljs" contenteditable>
 <div class="LessonSummary">
   <div class="LessonSummary-image">
     <%= link_to image_tag(content[:image]), lesson_path(slug) %>
@@ -132,11 +163,9 @@ end
     <h3><%= content[:title]   %></h3>
     <p><%=  content[:summary] %></p>
     <%= lesson_link_for(content, current_user) %>
-    </div>
+  </div>
 </div>
-            </code></pre>
-          </section>
-
+          </code></pre>
         </section>
 
         <section>
@@ -164,7 +193,7 @@ solving-perspective-problems:
         </section>
 
         <section>
-          <h2>app/views/lessons/_lesson_summary.erb</h2>
+          <h4>Style Guide reference</h4>
           <pre><code class="hljs" data-trim contenteditable>
 <section class="ContentRow">
   <div class="ContentRow-contain">
@@ -174,7 +203,7 @@ solving-perspective-problems:
 
     <% content = {image:         "https://placehold.it/640x346",
                   title:         "Lesson Title",
-                  summary:       "Bacon ipsum dolor amet beef ribs pork loin corned beef bresaola filet mignon. Capicola pork chop pork short ribs brisket spare ribs. Capicola biltong pork chop cupim turducken salami meatloaf. Boudin ball tip tail kevin pork loin short loin cupim venison pastrami pig prosciutto kielbasa. Turducken short loin tri-tip ribeye shankle chuck.",
+                  summary:       "Bacon ipsum dolor amet beef ribs pork loin corned beef . . .",
                   lesson_number: 1
                 } %>
     <%= render 'lessons/lesson_summary', slug: 'slug-to-lesson-page', content: content %>
@@ -196,7 +225,7 @@ solving-perspective-problems:
 
             <% content = {image:         "https://placehold.it/640x346",
                           title:         "Lesson Title",
-                          summary:       "Bacon ipsum dolor amet beef ribs pork loin corned beef bresaola filet mignon. Capicola pork chop pork short ribs brisket spare ribs. Capicola biltong pork chop cupim turducken salami meatloaf. Boudin ball tip tail kevin pork loin short loin cupim venison pastrami pig prosciutto kielbasa. Turducken short loin tri-tip ribeye shankle chuck.",
+                          summary:       "Bacon ipsum dolor amet beef ribs pork loin corned beef . . . ",
                           lesson_number: 1
                         } %>
             <%= render 'lessons/lesson_summary', slug: 'slug-to-lesson-page', content: content %>

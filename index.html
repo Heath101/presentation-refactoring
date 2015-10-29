@@ -42,7 +42,6 @@
       <div class="slides">
         <section>
           <h1>A Small Refactoring</h1>
-          <h3>Naming your data</h3>
         </section>
 
 
@@ -162,15 +161,45 @@ end
         </section>
 
         <section>
-        <h4>app/views/lessons/index.erb</h4>
-        <pre><code class="hljs" data-trim contenteditable>
+          <section class="full-image" data-transition="fade">
+            <img src="lib/images/LessonSummary.png" />
+          </section>
+          <section>
+          <h4>app/views/lessons/index.erb</h4>
+          <pre><code class="hljs" data-trim contenteditable>
 <h1>Lessons</h1>
 
 <% @lessons_content.each do |lesson_slug, lesson_content| %>
   <%= render 'lesson_summary',  slug: lesson_slug,
                              content: lesson_content %>
 <% end %>
-        </code></pre>
+          </code></pre>
+          </section>
+          <section data-transition="fade">
+            <h4>app/views/lessons/_lesson_summary.erb</h4>
+            <pre><code class="hljs" contenteditable>
+<div class="LessonSummary">
+  <div class="LessonSummary-image">
+    <%= link_to image_tag(content[:image]), lesson_path(slug) %>
+  </div>
+  <div class="LessonSummary-detail">
+    <h3><%= content[:title]   %></h3>
+    <p><%=  content[:summary] %></p>
+    <%= lesson_link_for(content, current_user) %>
+  </div>
+</div>
+            </code></pre>
+          </section>
+        </section>
+
+
+
+
+
+        <section data-background-video="lib/video/bob.mov" >
+          <div class="fragment" style="background-color: rgba(170,57,57,0.8)">
+            <p style="font-style: italic;">"Most intermediate programmers are too reluctant to extract classes." - Bob Martin</p>
+          </div>
         </section>
         <section>
           <section data-transition="fade">
@@ -193,7 +222,7 @@ end
             <pre><code class="hljs erb" contenteditable>
 <div class="LessonSummary">
   <div class="LessonSummary-image">
-    <%= link_to image_tag(content.image), lesson_path(slug) %>
+    <%= link_to image_tag(content.image), lesson_path(content.slug) %>
   </div>
   <div class="LessonSummary-detail">
     <h3><%= content.title  %></h3>
@@ -205,14 +234,6 @@ end
           </section>
         </section>
 
-
-
-
-        <section data-background-video="lib/video/bob.mov" >
-          <div class="fragment" style="background-color: rgba(170,57,57,0.8)">
-            <p style="font-style: italic;">"Most intermediate programmers are too reluctant to extract classes." - Bob Martin</p>
-          </div>
-        </section>
 
         <section data-transition="fade">
           <h4>Lesson</h4>
@@ -234,6 +255,8 @@ class Lesson
 end
             </code></pre>
           </section>
+
+
 
 
         <section>
@@ -270,46 +293,71 @@ end
           </section>
         </section>
 
-        <section data-background="rgba(170,57,57,0.8)">
+        <section data-background="rgb(170,57,57)">
           <h2>Refactoring Questions</h2>
           <ol>
             <li class="fragment" >What is this class's responsibility?</li>
             <li class="fragment" >Who should know about this data?</li>
           </ol>
         </section>
-        <section data-background="#295EEF">
-          <h1>Extrinsic</h1>
-        </section>
 
         <section>
           <section data-transition="fade">
             <h4>LessonsController</h4>
             <pre><code class="hljs" data-trim contenteditable>
-  # app/controllers/lessons_controller.rb
+# app/controllers/lessons_controller.rb
 
-  class LessonsController < ApplicationController
-    LESSONS_CONTENT ||= begin
-      raw_content = YAML.load_file('config/lesson_content.yml')
-      raw_content.each_with_object({}) do |(slug, content), lessons|
-        lessons[slug] = Lesson.new(content)
-      end
+class LessonsController < ApplicationController
+  LESSONS_CONTENT ||= begin
+    raw_content = YAML.load_file('config/lesson_content.yml')
+    raw_content.each_with_object({}) do |(slug, content), lessons|
+      lessons[slug] = Lesson.new(content)
     end
-
-    # . . .
-
   end
+
+  # . . .
+
+end
             </code></pre>
-            </section>
-            <section data-transition="fade">
-              <h4>LessonsController</h4>
-              <pre><code class="hljs" data-trim contenteditable>
-  # app/controllers/lessons_controller.rb
+            <pre class="fragment"><code class="hljs" data-trim contenteditable>
+class Content
 
-  class LessonsController < ApplicationController
-    LESSONS ||= Content.load_lessons
-
-    # . . .
+  def self.load_lessons
+    raw_content = YAML.load_file('config/lesson_content.yml')
+    raw_content.each_with_object({}) do |(slug, content), lessons|
+      lessons[slug] = Lesson.new(content)
+    end
   end
+end
+            </code></pre>
+          </section>
+          <section data-transition="fade">
+            <h4>LessonsController</h4>
+            <pre><code class="hljs" data-trim contenteditable>
+# app/controllers/lessons_controller.rb
+
+class LessonsController < ApplicationController
+  LESSONS_CONTENT ||= Content.load_lessons
+
+
+
+
+
+
+  # . . .
+
+end
+            </code></pre>
+            <pre><code class="hljs" data-trim contenteditable>
+class Content
+
+  def self.load_lessons
+    raw_content = YAML.load_file('config/lesson_content.yml')
+    raw_content.each_with_object({}) do |(slug, content), lessons|
+      lessons[slug] = Lesson.new(content)
+    end
+  end
+end
               </code></pre>
             </section>
           </section>
@@ -319,7 +367,7 @@ end
         <section>
           <h4>Content</h4>
           <pre ><code class="hljs ruby" data-trim contenteditable>
-module Content
+class Content
 
   def self.load_lessons
     raw_content = YAML.load_file('config/lesson_content.yml')
@@ -329,8 +377,9 @@ module Content
   end
 end
           </code></pre>
+
           <pre class='fragment'><code class="hljs" data-trim contenteditable>
-module Content
+class Content
   class Lesson
     attr_reader :lesson_number
     attr_reader :title
@@ -352,6 +401,119 @@ end
           </section>
         </section>
 
+        <section data-background="rgb(170,57,57)">
+
+          <section data-background="rgb(170,57,57)">
+            <h2>Is this better?</h2>
+            <ul>
+              <li class="fragment">Gave a name to the data</li>
+              <li class="fragment">Duck typing</li>
+              <li class="fragment">Better testing</li>
+              <li class="fragment">Isolated change</li>
+            </ul>
+          </section>
+        </section>
+
+        <section>
+          <section data-transition="fade">
+            <h4>LessonsController</h4>
+            <pre><code class="hljs" data-trim contenteditable>
+# app/controllers/lessons_controller.rb
+
+class LessonsController < ApplicationController
+  LESSONS ||= Content.load_lessons
+
+  def index
+    # redirect_to welcome_path unless current_user.welcomed?
+    @lessons = LESSONS
+  end
+
+  def show
+    # raise_not_found unless valid_lesson_slug?
+    @lesson = LESSONS[params[:lesson_slug]]
+    # current_user.watch_lesson @lesson.lesson_number
+    # render params[:lesson_slug].underscore
+  end
+
+# private
+  # def valid_lesson_slug?
+  #  Settings.lessons.slugs.include? params[:lesson_slug]
+  # end
+end
+            </code></pre>
+          </section>
+          <section data-transition="fade-in">
+            <h4>LessonsController</h4>
+            <pre><code class="hljs" data-trim contenteditable>
+# app/controllers/lessons_controller.rb
+
+class LessonsController < ApplicationController
+
+  def index
+    # redirect_to welcome_path unless current_user.welcomed?
+    @lessons = lessons
+  end
+
+  def show
+    # raise_not_found unless valid_lesson_slug?
+    @lesson = lessons[params[:lesson_slug]]
+    # current_user.watch_lesson @lesson.lesson_number
+    # render params[:lesson_slug].underscore
+  end
+
+private
+  # def valid_lesson_slug?
+  #  Settings.lessons.slugs.include? params[:lesson_slug]
+  # end
+
+  def lessons
+    Content.lessons
+  end
+end
+            </code></pre>
+          </section>
+        </section>
+        <section>
+          <section data-transition="fade">
+            <h4>Content</h4>
+            <pre ><code class="hljs ruby" data-trim contenteditable>
+class Content
+
+
+
+
+
+
+  def self.load_lessons
+    raw_content = YAML.load_file('config/lesson_content.yml')
+    raw_content.each_with_object({}) do |(slug, content), lessons|
+      lessons[slug] = Lesson.new(content)
+    end
+  end
+end
+            </code></pre>
+          </section>
+          <section data-transition="fade-in">
+            <h4>Content</h4>
+            <pre ><code class="hljs ruby" data-trim contenteditable>
+class Content
+  cattr_accessor :lessons
+
+  def self.lessons
+    @@lessons ||= load_lessons
+  end
+
+  def self.load_lessons
+    raw_content = YAML.load_file('config/lesson_content.yml')
+    raw_content.each_with_object({}) do |(slug, content), lessons|
+      lessons[slug] = Lesson.new(content)
+    end
+  end
+end
+            </code></pre>
+
+            </section>
+        </section>
 
 
 

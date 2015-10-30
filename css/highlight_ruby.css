@@ -2,6 +2,14 @@
   color: #4f4f4f;
 }
 
+.ruby.alt-ruby .hljs-comment {
+  color: yellow;
+}
+
+.big-code pre {
+  width: 98%;
+}
+
 .reveal pre code {
   max-height: 1000px;
 }

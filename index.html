@@ -257,8 +257,184 @@ class Lesson
 end
             </code></pre>
           </section>
+          <section>
+          <section data-transition="fade">
+            <h4>Hash</h4>
+            <pre><code class="hljs" contenteditable>
+<div class="LessonSummary">
+  <div class="LessonSummary-image">
+    <%= link_to image_tag(content[:image]), lesson_path(slug) %>
+  </div>
+  <div class="LessonSummary-detail">
+    <h3><%= content[:title]   %></h3>
+    <p><%=  content[:summary] %></p>
+    <%= lesson_link_for(content, current_user) %>
+  </div>
+</div>
+            </code></pre>
+          </section>
+          <section data-transition="fade">
+
+            <h4>Object</h4>
+            <pre><code class="hljs erb" contenteditable>
+<div class="LessonSummary">
+  <div class="LessonSummary-image">
+    <%= link_to image_tag(content.image), lesson_path(content.slug) %>
+  </div>
+  <div class="LessonSummary-detail">
+    <h3><%= content.title  %></h3>
+    <p><%=  content.summary %></p>
+    <%= lesson_link_for(content, current_user) %>
+  </div>
+</div>
+            </code></pre>
+          </section>
+        </section>
+        <section data-background="rgb(170,57,57)">
+          <h2>What has been gained by using an object over a hash?</h2>
+          <ul>
+            <li class="fragment">Duck typing</li>
+            <li class="fragment">Testing</li>
+            <li class="fragment">Name makes it easier to reason about</li>
+            <li class="fragment">Put boundaries around the data</li>
+            <li class="fragment">Reduced hidden bugs</li>
+          </ul>
+        </section>
+
+      <section>
+        <section data-transition="fade">
+          <pre><code class="hljs ruby alt-ruby" >
+[1] pry(main)>
 
 
+
+
+
+
+
+          </code></pre>
+        </section>
+        <section data-transition="fade">
+          <pre><code class="hljs ruby alt-ruby" >
+[1] pry(main)> a = Hash[:foo, 'bar']
+
+
+
+
+
+
+
+          </code></pre>
+        </section>
+        <section data-transition="fade">
+          <pre><code class="hljs ruby alt-ruby" >
+[1] pry(main)> a = Hash[:foo, 'bar']
+[2] pry(main)> Obj = Struct.new(:foo)
+[3] pry(main)> b = Obj.new('bar')
+
+
+
+
+
+          </code></pre>
+        </section>
+        <section data-transition="fade">
+          <pre><code class="hljs ruby alt-ruby" >
+[1] pry(main)> a = Hash[:foo, 'bar']
+[2] pry(main)> Obj = Struct.new(:foo)
+[3] pry(main)> b = Obj.new('bar')
+[4] pry(main)> a[:foo]
+
+
+
+
+          </code></pre>
+        </section>
+        <section data-transition="fade">
+          <pre><code class="hljs ruby alt-ruby" >
+[1] pry(main)> a = Hash[:foo, 'bar']
+[2] pry(main)> Obj = Struct.new(:foo)
+[3] pry(main)> b = Obj.new('bar')
+[4] pry(main)> a[:foo] #=> "bar"
+
+
+
+
+          </code></pre>
+        </section>
+        <section data-transition="fade">
+          <pre><code class="hljs ruby alt-ruby" >
+[1] pry(main)> a = Hash[:foo, 'bar']
+[2] pry(main)> Obj = Struct.new(:foo)
+[3] pry(main)> b = Obj.new('bar')
+[4] pry(main)> a[:foo] #=> "bar"
+[5] pry(main)> b.foo
+
+
+
+          </code></pre>
+        </section>
+        <section data-transition="fade">
+          <pre><code class="hljs ruby alt-ruby" >
+[1] pry(main)> a = Hash[:foo, 'bar']
+[2] pry(main)> Obj = Struct.new(:foo)
+[3] pry(main)> b = Obj.new('bar')
+[4] pry(main)> a[:foo] #=> "bar"
+[5] pry(main)> b.foo   #=> "bar"
+
+
+
+          </code></pre>
+        </section>
+        <section data-transition="fade">
+          <pre><code class="hljs ruby alt-ruby" >
+[1] pry(main)> a = Hash[:foo, 'bar']
+[2] pry(main)> Obj = Struct.new(:foo)
+[3] pry(main)> b = Obj.new('bar')
+[4] pry(main)> a[:foo] #=> "bar"
+[5] pry(main)> b.foo   #=> "bar"
+[6] pry(main)> a[:baz]
+
+
+          </code></pre>
+        </section>
+        <section data-transition="fade">
+          <pre><code class="hljs ruby alt-ruby" >
+[1] pry(main)> a = Hash[:foo, 'bar']
+[2] pry(main)> Obj = Struct.new(:foo)
+[3] pry(main)> b = Obj.new('bar')
+[4] pry(main)> a[:foo] #=> "bar"
+[5] pry(main)> b.foo   #=> "bar"
+[6] pry(main)> a[:baz] #=> nil
+
+
+          </code></pre>
+        </section>
+        <section data-transition="fade">
+          <pre><code class="hljs ruby alt-ruby" >
+[1] pry(main)> a = Hash[:foo, 'bar']
+[2] pry(main)> Obj = Struct.new(:foo)
+[3] pry(main)> b = Obj.new('bar')
+[4] pry(main)> a[:foo] #=> "bar"
+[5] pry(main)> b.foo   #=> "bar"
+[6] pry(main)> a[:baz] #=> nil
+[7] pry(main)> b.baz
+
+          </code></pre>
+        </section>
+        <section data-transition="fade">
+          <pre><code class="hljs ruby alt-ruby" >
+[1] pry(main)> a = Hash[:foo, 'bar']
+[2] pry(main)> Obj = Struct.new(:foo)
+[3] pry(main)> b = Obj.new('bar')
+[4] pry(main)> a[:foo] #=> "bar"
+[5] pry(main)> b.foo   #=> "bar"
+[6] pry(main)> a[:baz] #=> nil
+[7] pry(main)> b.baz   #=> NoMethodError: undefined method `baz'
+                       #=> for #(struct Obj foo="bar")
+          </code></pre>
+        </section>
+      </section>
 
 
         <section>
@@ -363,58 +539,10 @@ end
               </code></pre>
             </section>
           </section>
-
-
-
-        <section>
-          <h4>Content</h4>
-          <pre ><code class="hljs ruby" data-trim contenteditable>
-class Content
-
-  def self.load_lessons
-    raw_content = YAML.load_file('config/lesson_content.yml')
-    raw_content.each_with_object({}) do |(slug, content), lessons|
-      lessons[slug] = Lesson.new(content)
-    end
-  end
-end
-          </code></pre>
-
-          <pre class='fragment'><code class="hljs" data-trim contenteditable>
-class Content
-  class Lesson
-    attr_reader :lesson_number
-    attr_reader :title
-    attr_reader :slug
-    attr_reader :summary
-    attr_reader :description
-    attr_reader :image
-    attr_reader :activity
-
-    def initialize(attributes)
-      attributes.each do |key, val|
-        instance_variable_set("@#{key}", val) if respond_to? key
-      end
-    end
-  end
-end
-
-            </code></pre>
-          </section>
-        </section>
-
-        <section data-background="rgb(170,57,57)">
-
           <section data-background="rgb(170,57,57)">
-            <h2>Is this better?</h2>
-            <ul>
-              <li class="fragment">Gave a name to the data</li>
-              <li class="fragment">Duck typing</li>
-              <li class="fragment">Better testing</li>
-              <li class="fragment">Isolated change</li>
-            </ul>
+            <h2>But wait . . .</h2>
           </section>
-        </section>
+
 
         <section>
           <section data-transition="fade">
@@ -515,6 +643,19 @@ end
             </code></pre>
 
             </section>
+        </section>
+        <section data-background="rgb(170,57,57)">
+          <h2>Are we better off?</h2>
+          <ul>
+            <li class="fragment">Improved testing</li>
+            <li class="fragment">Isolated change</li>
+            <li class="fragment">Modeled a domain concept</li>
+            <li class="fragment">I'm happier</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Questions?</h2>
         </section>
 
 

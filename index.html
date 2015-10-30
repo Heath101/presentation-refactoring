@@ -597,6 +597,36 @@ private
   # end
 
   def lessons
+    Content.load_lessons
+  end
+end
+            </code></pre>
+          </section>
+          <section data-transition="fade-in">
+            <h4>LessonsController</h4>
+            <pre><code class="hljs" data-trim contenteditable>
+# app/controllers/lessons_controller.rb
+
+class LessonsController < ApplicationController
+
+  def index
+    # redirect_to welcome_path unless current_user.welcomed?
+    @lessons = lessons
+  end
+
+  def show
+    # raise_not_found unless valid_lesson_slug?
+    @lesson = lessons[params[:lesson_slug]]
+    # current_user.watch_lesson @lesson.lesson_number
+    # render params[:lesson_slug].underscore
+  end
+
+private
+  # def valid_lesson_slug?
+  #  Settings.lessons.slugs.include? params[:lesson_slug]
+  # end
+
+  def lessons
     Content.lessons
   end
 end
@@ -608,6 +638,21 @@ end
             <h4>Content</h4>
             <pre ><code class="hljs ruby" data-trim contenteditable>
 class Content
+
+  def self.load_lessons
+    raw_content = YAML.load_file('config/lesson_content.yml')
+    raw_content.each_with_object({}) do |(slug, content), lessons|
+      lessons[slug] = Lesson.new(content)
+    end
+  end
+end
+            </code></pre>
+          </section>
+          <section data-transition="fade">
+            <h4>Content</h4>
+            <pre ><code class="hljs ruby" data-trim contenteditable>
+class Content
+
 
 
 
@@ -633,6 +678,7 @@ class Content
     @@lessons ||= load_lessons
   end
 
+private
   def self.load_lessons
     raw_content = YAML.load_file('config/lesson_content.yml')
     raw_content.each_with_object({}) do |(slug, content), lessons|
@@ -645,14 +691,20 @@ end
             </section>
         </section>
         <section data-background="rgb(170,57,57)">
-          <h2>Are we better off?</h2>
+          <h2>Review</h2>
           <ul>
-            <li class="fragment">Improved testing</li>
-            <li class="fragment">Isolated change</li>
-            <li class="fragment">Modeled a domain concept</li>
-            <li class="fragment">I'm happier</li>
+            <li class="fragment">Recognized and modeled a domain concept</li>
+            <li class="fragment">Made explicit the structure of the data being passed around the app</li>
+            <li class="fragment">Insulated ourselves from change</li>
+            <li class="fragment">Honored Single Responsibility Principle</li>
           </ul>
+
         </section>
+
+        <section>
+          <h1>: )</h1>
+        </section>
+
 
         <section>
           <h2>Questions?</h2>
